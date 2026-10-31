@@ -14,3 +14,4 @@ __pycache__/
 # Divers
 .env
 *.log
+.pytest_cache/

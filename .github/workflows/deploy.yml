@@ -17,6 +17,19 @@ env:
   IMAGE: ghcr.io/morabetyahia/devsecops-app
 
 jobs:
+  tests:
+    name: 0. Tests (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: { python-version: '3.12' }
+      - name: Installer les dépendances
+        run: pip install -r app/requirements.txt -r app/requirements-dev.txt
+      - name: Lancer les tests
+        working-directory: app
+        run: pytest -v
+
   secrets-scan:
     name: 1. Secrets (Gitleaks)
     runs-on: ubuntu-latest
@@ -59,7 +72,7 @@ jobs:
 
   build-scan-push:
     name: 4. Build, scan Trivy, push GHCR
-    needs: [secrets-scan, sast, iac-scan]
+    needs: [tests, secrets-scan, sast, iac-scan]
     runs-on: ubuntu-latest
     permissions:
       contents: read
