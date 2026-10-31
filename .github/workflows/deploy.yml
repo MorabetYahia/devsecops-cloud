@@ -21,7 +21,7 @@ jobs:
     name: 0. Tests (pytest)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
       - name: Installer les dépendances
@@ -34,7 +34,7 @@ jobs:
     name: 1. Secrets (Gitleaks)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with: { fetch-depth: 0 }
       - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
         env:
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     container: semgrep/semgrep
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: semgrep scan --config p/python --config p/dockerfile --error
 
   iac-scan:
@@ -55,7 +55,7 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
       - name: Installer Checkov
@@ -78,7 +78,7 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Build
         run: docker build -t $IMAGE:${{ github.sha }} app/
       - name: Scan image (bloque si CRITICAL/HIGH corrigeable)
@@ -112,7 +112,7 @@ jobs:
       contents: read
       id-token: write # autorise GitHub à émettre le jeton OIDC
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Connexion Azure (OIDC, sans secret)
         uses: azure/login@v2
         with:
