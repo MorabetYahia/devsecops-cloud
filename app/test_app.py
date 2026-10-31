@@ -9,13 +9,23 @@ def client():
     return flask_app.test_client()
 
 
-def test_index_renvoie_le_message(client):
+def test_page_accueil(client):
     r = client.get("/")
     assert r.status_code == 200
-    data = r.get_json()
+    assert r.mimetype == "text/html"
+    assert b"Yahia Morabet" in r.data
+
+
+def test_api_info(client):
+    data = client.get("/api/info").get_json()
     assert data["message"] == "Hello DevSecOps"
-    assert "version" in data
-    assert "pod" in data
+    assert {"pod", "version", "uptime_seconds"} <= data.keys()
+
+
+def test_entetes_securite(client):
+    r = client.get("/")
+    assert "default-src 'none'" in r.headers["Content-Security-Policy"]
+    assert r.headers["X-Content-Type-Options"] == "nosniff"
 
 
 def test_health_ok(client):

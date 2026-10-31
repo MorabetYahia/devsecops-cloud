@@ -9,6 +9,7 @@ RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/* \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY app.py .
+COPY templates/ templates/
 
 USER 10001
 EXPOSE 8080
