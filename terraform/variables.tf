@@ -20,3 +20,8 @@ variable "node_vm_size" {
   default     = "Standard_B2s_v2"
   description = "Taille du nœud : 2 vCPU, 8 Go de RAM"
 }
+
+variable "github_principal_id" {
+  type        = string
+  description = "Object ID du service principal GitHub (OIDC)"
+}

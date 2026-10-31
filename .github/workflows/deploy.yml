@@ -101,3 +101,31 @@ jobs:
           docker tag $IMAGE:${{ github.sha }} $IMAGE:latest
           docker push $IMAGE:${{ github.sha }}
           docker push $IMAGE:latest
+
+  deploy:
+    name: 5. Déploiement AKS
+    needs: build-scan-push
+    if: github.ref == 'refs/heads/main' && vars.CLUSTER_UP == 'true'
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      id-token: write # autorise GitHub à émettre le jeton OIDC
+    steps:
+      - uses: actions/checkout@v5
+      - name: Connexion Azure (OIDC, sans secret)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - uses: azure/setup-kubectl@v4
+      - name: Accès au cluster
+        run: az aks get-credentials -g devsecops-rg -n devsecops-aks --overwrite-existing
+      - name: Déployer la version du commit
+        run: |
+          sed -i "s|$IMAGE:latest|$IMAGE:${GITHUB_SHA}|" k8s/deployment.yaml
+          sed -i "s|value: \"dev\"|value: \"${GITHUB_SHA::7}\"|" k8s/deployment.yaml
+          kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml
+          kubectl rollout status deployment/devsecops-app --timeout=180s
+          kubectl get pods,svc -o wide
