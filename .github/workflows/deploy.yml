@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with: { python-version: '3.12' }
       - name: Installer les dépendances
         run: pip install -r app/requirements.txt -r app/requirements-dev.txt
@@ -56,7 +56,7 @@ jobs:
       security-events: write
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with: { python-version: '3.12' }
       - name: Installer Checkov
         run: pip install checkov
